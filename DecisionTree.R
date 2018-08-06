@@ -1,32 +1,32 @@
-#Question 6:Decision Tree
+#Decision Tree
 #Submitted by:Apurva Nikade
 
 ########################################################################################################
-#Read the LasagnaTriers.csv file
-setwd('C:/Users/Harish/Desktop/BDA/Assignment_3')
+#Read the FoodTriers.csv file
+setwd('C:/.....')
 
-LasagnaTriers <- read.csv("Lasagna Triers.csv", header = TRUE)
+FoodTriers <- read.csv("Food Triers.csv", header = TRUE)
 #Load required libraries
 library(ggplot2)
 library(e1071)
 library(rattle)
 library('rpart')
-View(LasagnaTriers)
+View(FoodTriers)
 
-#Q6.a. Split dataset into training(770) and testing(86) using random selection
+#Split dataset into training(770) and testing(86) using random selection
 set.seed(100)
 
-sample <- sample.int(n = nrow(LasagnaTriers), size = floor(.90*nrow(LasagnaTriers)), replace = FALSE)
-train <- LasagnaTriers[sample, ]
+sample <- sample.int(n = nrow(FoodTriers), size = floor(.90*nrow(FoodTriers)), replace = FALSE)
+train <- FoodTriers[sample, ]
 cat("length of training data is",length(train$Person))
-test  <- LasagnaTriers[-sample, ]
+test  <- FoodTriers[-sample, ]
 cat("length of test data is", length(test$Person))
 
 #b.Let haveTried be the response variable and use rpart library to construct decision tree in traing set
 
 #Note: Not using Person variable in decision tree classification s it is a nominal categorical variable
 
-## Q6.b.1 Using the set of numeric predictors alone
+## Using the set of numeric predictors alone
 
 Model_numeric <- rpart(Have.Tried ~ Age + Weight + Income+
                          + Car.Value + CC.Debt + Mall.Trips,
@@ -41,7 +41,7 @@ text(Model_numeric,use.n=TRUE,all=0.2)
 fancyRpartPlot(Model_numeric, main ="Model_numeric tree")
 
 
-# Q6.b.2 Using the set of categorical predictors alone
+# Using the set of categorical predictors alone
 Model_categorical <- rpart(Have.Tried ~ Pay.Type + Gender +
                              Live.Alone + Dwell.Type +Nbhd,
                            data=train, control=rpart.control(maxdepth=4),
@@ -55,7 +55,7 @@ text(Model_categorical,use.n=TRUE,all=0.2)
 #Use rattle to plot the tree:
 fancyRpartPlot(Model_categorical,main ="Categorical")
 
-# Q6.b.3 Using entire set of pedictors
+# Using entire set of pedictors
 Model_all <- rpart(Have.Tried ~  Age + Weight + Income+
                      Pay.Type + Car.Value + CC.Debt + Gender +
                      Live.Alone + Dwell.Type + Mall.Trips +Nbhd,
@@ -68,7 +68,7 @@ text(Model_all,use.n=TRUE,all=0.2)
 #use rattle to plot the decision tree
 fancyRpartPlot(Model_all)
 
-#Q6.e  Contrast the trees in part b using various metrics and comment on accuracy
+#Contrast the trees in part b using various metrics and comment on accuracy
 
 #To validate the model we use the printcp and plotcp functions.
 #Model with numeric predictors alone
@@ -96,7 +96,7 @@ fancyRpartPlot(ptree_numeric, uniform=TRUE, main="Pruned all Model")
 ptree_categorical<- prune(Model_categorical,cp= Model_categorical$cptable[which.min(Model_categorical$cptable[,"xerror"]),"CP"])
 fancyRpartPlot(ptree_categorical, uniform=TRUE, main="Pruned categorical Model")
 
-## Q6.f Validate the trees in part b against testing dataset and identify the best model
+##Validate the trees in part b against testing dataset and identify the best model
 
 #Model with numeric set
 pred_numeric <- predict(Model_numeric, newdata = test, type = 'class')
